@@ -33,10 +33,14 @@ data:
         num_workers: 2
 
 model:
-    module: core.models.mnist_net
-    class: Net
+    module: core.model.model
+    class: EfficientNet
     Net:
         num_classes: 10
+        model: B0
+        pretrained: True
+        advprop: True
+        in_channels: 3
 
 loss:
     module: core.loss.loss

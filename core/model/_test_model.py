@@ -5,9 +5,7 @@ import torch
 import torch.nn as nn
 
 
-from efficientnet import EfficientNet
-
-torch.nn.Conv
+from model import EfficientNet
 
 # -- fixtures -------------------------------------------------------------------------------------
 
@@ -127,6 +125,11 @@ def test_extract_endpoints(net, img_size):
     assert endpoints['reduction_5'].size(2) == img_size // 32
 
 if __name__ == '__main__':
-    net = EfficientNet.from_pretrained('efficientnet-b0')
-    test_modify_pool(net, 224)
+    # net = EfficientNet.from_pretrained('efficientnet-b2', num_classes=10)
+    # test_modify_pool(net, 224)
+    # net._fc = nn.Linear(in_features=2560, out_features=10, bias=True)
+    layer = nn.Linear(in_features=10, out_features=2, bias=False)
+    layer.out_features = 5
+    print(layer)
+    # print(net)
     print("successfully test")

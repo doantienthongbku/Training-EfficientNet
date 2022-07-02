@@ -3,11 +3,11 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 
-from imple_same_mode import (
+from .imple_same_mode import (
     get_same_padding_conv2d,
     get_same_padding_maxPool2d
 )
-from utils import *
+from .utils import *
 
 
 VALID_MODELS = (

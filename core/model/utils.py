@@ -355,7 +355,7 @@ url_map_advprop = {
 
 # TODO: add the pe-trained weights url map of 'efficientnet-l2'
 
-def load_pretrained_weights(model, model_name, weights_path=None, load_fc=None, advprop=False, verbose=True):
+def load_pretrained_weights(model, model_name, weights_path=None, load_fc=True, advprop=False, verbose=True):
 
     if isinstance(weights_path, str):
         state_dict = torch.load(weights_path)
