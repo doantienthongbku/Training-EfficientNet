@@ -27,23 +27,64 @@ def load_model(config):
     exec(cmd_import)
     
     # choose mode of model and set parameters
-    if setting['Net']['pretrained']:
-        cmd_load_model = f"{setting['class']}.from_pretrained('{model_choose[setting['Net']['model']]}', advprop={setting['Net']['advprop']}, \
-            in_channels={setting['Net']['in_channels']}, num_classes={setting['Net']['num_classes']})"
+    if setting['Params']['pretrained']:
+        cmd_load_model = f"{setting['class']}.from_pretrained('{model_choose[setting['Params']['model']]}',\
+            advprop={setting['Params']['advprop']},in_channels={setting['Params']['in_channels']},\
+            num_classes={setting['Params']['num_classes']})"
         model = eval(cmd_load_model)
         
-        model._fc.out_features = setting['Net']['num_classes']  # change num_classes of model
+        model._fc.out_features = setting['Params']['num_classes']  # change num_classes of model
     else:
-        cmd_load_model = f"{setting['class']}.from_name({model_choose(setting['Net']['model'])}), in_channels={setting['Net']['in_channels']})"
+        cmd_load_model = f"{setting['class']}.from_name({model_choose(setting['Params']['model'])}), in_channels={setting['Params']['in_channels']})"
         model = eval(cmd_load_model)
         
-        model._fc.out_features = setting['Net']['num_classes']  # change num_classes of model
-    
+        model._fc.out_features = setting['Params']['num_classes']  # change num_classes of model
+
     return model
+
+
+def load_loss(config):
+    setting = config['loss']
     
+    # import loss
+    cmd_import = f"from {setting['module']} import {setting['class']}"
+    exec(cmd_import)
+    
+    cmd_loss = f"{setting['class']}("
+    for key, val in setting['Params'].items():
+        cmd_params = f"{key}={val},"
+        cmd_loss += cmd_params
+    
+    cmd_loss += ")"
+    
+    loss = eval(cmd_loss)
+    return loss
+
+
+def load_optim(config):
+    setting = config['optim']
+    
+    # import loss
+    cmd_import = f"from {setting['module']} import {setting['class']}"
+    exec(cmd_import)
+    
+    cmd_optim = f"{setting['class']}("
+    for key, val in setting['Params'].items():
+        cmd_params = f"{key}={val},"
+        cmd_optim += cmd_params
+        
+    cmd_optim += ")"
+    
+    optim = eval(cmd_optim)
+    return optim
+
+
+def load_lr_scheduler(config):
+    pass
 
 if __name__ == '__main__':
     config = load_config("config/training_config.yaml")
     model = load_model(config)
-    print(model)
+    optim = load_optim(config)
+    print(optim)
     

@@ -35,7 +35,7 @@ data:
 model:
     module: core.model.model
     class: EfficientNet
-    Net:
+    Params:
         num_classes: 10
         model: B0
         pretrained: True
@@ -43,26 +43,31 @@ model:
         in_channels: 3
 
 loss:
-    module: core.loss.loss
-    class: Loss
-    Loss:
-        loss_fn:
-        module: torch.nn
-        class: CrossEntropyLoss
-        output_transform: 'lambda x: (x[0], x[1])'
+    module: torch.nn
+    class: CrossEntropyLoss
+    Params:
+        weight: None
+        size_average: None
+        ignore_index: -100
+        reduce: None
+        reduction: '''mean'''
+        label_smoothing: 0.0
 
 optim:
     module: torch.optim
     class: Adam
-    Adam:
-        params: config['model'].parameters()
+    Params:
+        params: model.parameters()
         lr: 0.001
+        betas: (0.9, 0.999)
+        eps: 1e-08
+        weight_decay: 1e-4
         amsgrad: True
 
 lr_scheduler:
     module: core.handlers.lr_scheduler
     class: ReduceLROnPlateau
-    ReduceLROnPlateau:
+    Params:
         evaluator_name: '''valid'''
         score_name: '''loss'''
         optim: config['optim']
