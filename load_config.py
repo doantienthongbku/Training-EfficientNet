@@ -43,26 +43,11 @@ def load_model(config):
     return model
 
 
-def load_loss(config):
-    setting = config['loss']
-    
-    # import loss
-    cmd_import = f"from {setting['module']} import {setting['class']}"
-    exec(cmd_import)
-    
-    cmd_loss = f"{setting['class']}("
-    for key, val in setting['Params'].items():
-        cmd_params = f"{key}={val},"
-        cmd_loss += cmd_params
-    
-    cmd_loss += ")"
-    
-    loss = eval(cmd_loss)
-    return loss
 
-
-def load_optim(config):
-    setting = config['optim']
+def load_engine(config, engine):
+    assert engine in ['loss', 'optim', 'lr_scheduler', 'early_stopping']
+    
+    setting = config[engine]
     
     # import loss
     cmd_import = f"from {setting['module']} import {setting['class']}"
@@ -78,9 +63,6 @@ def load_optim(config):
     optim = eval(cmd_optim)
     return optim
 
-
-def load_lr_scheduler(config):
-    pass
 
 if __name__ == '__main__':
     config = load_config("config/training_config.yaml")

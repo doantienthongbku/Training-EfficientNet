@@ -4,33 +4,32 @@ data:
         class: DataLoader
         DataLoader:
         dataset:
-            module: torchvision.datasets
-            class: MNIST
-            MNIST:
-            root: '''./dataset/mnist'''
-            train: True
-            download: True
-            transform: transforms.Compose([transforms.ToTensor(),
-                                          transforms.Normalize((0.1307,), (0.3081,))])
-        batch_size: 64
+            module: core.data.custom_dataset
+            class: DogCat
+            Params:
+                image_dir: '''./Dataset/train'''
+                image_pattern: '''*.jpg'''
+                transforms: transforms.Compose([transforms.ToTensor(),
+                                                transforms.Normalize((0.1307,), (0.3081,))])
+        batch_size: 128
         shuffle: True
-        num_workers: 2
+        num_workers: 4
 
     valid:
         module: torch.utils.data
         class: DataLoader
         DataLoader:
         dataset:
-            module: torchvision.datasets
-            class: MNIST
-            MNIST:
-            root: '''./dataset/mnist'''
-            train: False
-            download: True
-            transform: transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
-        batch_size: 64
+            module: core.data.custom_dataset
+            class: DogCat
+            Params:
+                image_dir: '''./Dataset/valid'''
+                image_pattern: '''*.jpg'''
+                transforms: transforms.Compose([transforms.ToTensor(),
+                                                transforms.Normalize((0.1307,), (0.3081,))])
+        batch_size: 128
         shuffle: False
-        num_workers: 2
+        num_workers: 4
 
 model:
     module: core.model.model
@@ -65,26 +64,24 @@ optim:
         amsgrad: True
 
 lr_scheduler:
-    module: core.handlers.lr_scheduler
-    class: ReduceLROnPlateau
+    module: torch.optim.lr_scheduler
+    class: StepLR
     Params:
-        evaluator_name: '''valid'''
-        score_name: '''loss'''
-        optim: config['optim']
-        mode: '''min'''
-        factor: 0.1
-        patience: 3
-        verbose: True
+        optimizer: optimizer
+        step_size: 30
+        gamma: 0.1
+        last_epoch: -1
+        verbose: False
 
 early_stopping:
     module: core.handlers.early_stopping
     class: EarlyStopping
-    EarlyStopping:
-        evaluator_name: '''valid'''
-        score_name: '''loss'''
-        patience: 3
+    Params:
+        patience: 7
+        verbose: False
         delta: 0
-        mode: '''min'''
+        path: 'checkpoint.pth'
+        trace_func: print
 
 metric:
     module: core.handlers.evaluator
